@@ -18,10 +18,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Secrets
+      run: |
+          echo "${{env.AZURE}}"
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
-        azurecredentials: ${{secrets.AZURECREDENTIALS}}
+        azurecredentials: ${{env.AZURE}}
     
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
