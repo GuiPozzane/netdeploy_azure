@@ -41,12 +41,12 @@ jobs:
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
       with:
-        file: ./github/workflows/variables/iac/env.default.yaml
+        file: ./.github/workflows/variables/iac/env.default.yaml
 
     - name: Load iac environment variables - Environment Specific
       uses: ./.github/actions/load-env
       with:
-        file: ./github/workflows/variables/iac/env.${{ github.event.inputs.environment }}.yaml
+        file: ./.github/workflows/variables/iac/env.${{ github.event.inputs.environment }}.yaml
 
     - name: Create Resource Group
       run: |
