@@ -12,7 +12,7 @@ on:
           - prd
 
 jobs:
-  DeployInfra:
+  DeployInfrastructure:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +21,7 @@ jobs:
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
-        enviroment: ${{ github.event.inputs.environment }}
+        azurecredentials: ${{secrets.AZURECREDENTIALS}}
     
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
