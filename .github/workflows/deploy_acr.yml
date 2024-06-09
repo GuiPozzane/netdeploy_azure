@@ -1,8 +1,9 @@
 name: CD - Deploy ACR
+
 on:
   workflow_dispatch:
     inputs:
-      enviroment:
+      environment:
         description: 'Environment'
         required: true
         default: 'prd'
@@ -13,39 +14,46 @@ on:
 
 jobs:
   DeployInfrastructure:
-    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     steps:
     - uses: actions/checkout@v4
-    
+
+    - name: Print GitHub context
+      run: |
+        echo "GitHub context:"
+        echo "${{ toJson(github) }}"
+
+    - name: Debug Environment Input
+      run: |
+        echo "Environment input: ${{ github.event.inputs.environment }}"
+
     - name: Debug Secrets
       run: |
         echo "AZURE secret: ${{ secrets.AZURE }}"
-        echo "Environment: ${{ inputs.environment }}"
-
+        echo "Environment: ${{ github.event.inputs.environment }}"
 
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
-        azurecredentials: ${{secrets.AZURE}}
-    
+        azurecredentials: ${{ secrets.AZURE }}
+
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
       with:
         file: ./github/workflows/variables/iac/env.default.yaml
-    
-    - name: Load iac environment variables - Default
+
+    - name: Load iac environment variables - Environment Specific
       uses: ./.github/actions/load-env
       with:
-        file: ./github/workflows/variables/iac/env.${{ inputs.environment}}.yaml
-    
+        file: ./github/workflows/variables/iac/env.${{ github.event.inputs.environment }}.yaml
+
     - name: Create Resource Group
       run: |
-          az group create --name ${{env.resourceGroupName}} --location ${{env.resourceGroupLocation}}
-          echo "Resource Group ${{env.resourceGroupName}} created in subscription $(az account show --query name --output tsv)."
+        az group create --name ${{ env.resourceGroupName }} --location ${{ env.resourceGroupLocation }}
+        echo "Resource Group ${{ env.resourceGroupName }} created in subscription $(az account show --query name --output tsv)."
 
     - name: Deploy Acr Group
       run: |
-          echo "Deploying to Resource Group ${{env.resourceGroupName}} in subscription $(az account show --query name --output tsv)."
-          az deployment group create --resource-group ${{env.resourceGroupName}} --name imageRegistryDeploy --template-file ./infra/acr_deploy.bicep
-          
+        echo "Deploying to Resource Group ${{ env.resourceGroupName }} in subscription $(az account show --query name --output tsv)."
+        az deployment group create --resource-group ${{ env.resourceGroupName }} --name imageRegistryDeploy --template-file ./infra/acr_deploy.bicep
