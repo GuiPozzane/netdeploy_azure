@@ -13,7 +13,7 @@ on:
 
 jobs:
   DeployInfrastructure:
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -21,9 +21,9 @@ jobs:
     - name: Debug Secrets
       run: |
         echo "AZURE secret: ${{ secrets.AZURE }}"
-        echo "Environment: ${{ github.event.inputs.environment }}"
+        echo "Environment: ${{ inputs.environment }}"
 
-        
+
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
@@ -37,7 +37,7 @@ jobs:
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
       with:
-        file: ./github/workflows/variables/iac/env.${{github.event.inputs.environment}}.yaml
+        file: ./github/workflows/variables/iac/env.${{ inputs.environment}}.yaml
     
     - name: Create Resource Group
       run: |
