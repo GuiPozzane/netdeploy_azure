@@ -18,9 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Secrets
+    - name: Debug Secrets
       run: |
-          echo "${{secrets.AZURE}}"
+        echo "AZURE secret: ${{ secrets.AZURE }}"
+        echo "Environment: ${{ github.event.inputs.environment }}"
+
+        
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
