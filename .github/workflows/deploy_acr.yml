@@ -20,11 +20,11 @@ jobs:
     
     - name: Secrets
       run: |
-          echo "${{env.AZURE}}"
+          echo "${{secrets.AZURE}}"
     - name: Az Login
       uses: ./.github/actions/az-login
       with:
-        azurecredentials: ${{env.AZURE}}
+        azurecredentials: ${{secrets.AZURE}}
     
     - name: Load iac environment variables - Default
       uses: ./.github/actions/load-env
