@@ -1,4 +1,4 @@
-name: CD - Deploy ACR
+name: CD - Deploy Resource Group and ImageRegistry
 
 on:
   workflow_dispatch:
@@ -18,20 +18,6 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     steps:
     - uses: actions/checkout@v4
-
-    - name: Print GitHub context
-      run: |
-        echo "GitHub context:"
-        echo "${{ toJson(github) }}"
-
-    - name: Debug Environment Input
-      run: |
-        echo "Environment input: ${{ github.event.inputs.environment }}"
-
-    - name: Debug Secrets
-      run: |
-        echo "AZURE secret: ${{ secrets.AZURE }}"
-        echo "Environment: ${{ github.event.inputs.environment }}"
 
     - name: Az Login
       uses: ./.github/actions/az-login
