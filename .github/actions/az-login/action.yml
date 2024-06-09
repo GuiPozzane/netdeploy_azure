@@ -1,0 +1,12 @@
+name: 'Login in Azure'
+description: 'Login based on Enviroment'
+inputs:
+  azurecredentials:
+    description: 'Azure Credentials'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - uses: azure/login@v2
+      with:
+        creds: ${{ inputs.azurecredentials }}

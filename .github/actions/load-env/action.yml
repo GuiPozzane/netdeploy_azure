@@ -1,0 +1,30 @@
+name: 'Load Environment Variables'
+description: 'Reads an environment.yaml file and loads its contents into environment variables'
+author: 'Your Name'
+inputs:
+  file:
+    description: 'The path to the environment.yaml file'
+    required: true
+    default: 'environment.yaml'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install yq
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq
+        sudo wget https://github.com/mikefarah/yq/releases/download/v4.9.6/yq_linux_amd64 -O /usr/bin/yq
+        sudo chmod +x /usr/bin/yq
+
+    - name: Load environment variables from YAML file
+      shell: bash
+      run: |
+        env_content=$(yq e '.variables' ${{ inputs.file }})
+        echo "$env_content" | while read line; do
+          if [[ $line =~ ^[[:space:]]*([a-zA-Z0-9_]+):[[:space:]]*(.*)[[:space:]]*$ ]]; then
+            var_name=${BASH_REMATCH[1]}
+            var_value=${BASH_REMATCH[2]}
+            echo "$var_name=$var_value" >> $GITHUB_ENV
+          fi
+        done

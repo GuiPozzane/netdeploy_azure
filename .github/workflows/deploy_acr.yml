@@ -1,0 +1,45 @@
+name: CD - Deploy ACR
+on:
+  workflow_dispatch:
+    inputs:
+      enviroment:
+        description: 'Environment'
+        required: true
+        default: 'prd'
+        type: choice
+        options:
+          - stg
+          - prd
+
+jobs:
+  DeployInfra:
+    environment: ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Az Login
+      uses: ./.github/actions/az-login
+      with:
+        enviroment: ${{ github.event.inputs.environment }}
+    
+    - name: Load iac environment variables - Default
+      uses: ./.github/actions/load-env
+      with:
+        file: ./github/workflows/variables/iac/env.default.yaml
+    
+    - name: Load iac environment variables - Default
+      uses: ./.github/actions/load-env
+      with:
+        file: ./github/workflows/variables/iac/env.${{github.event.inputs.environment}}.yaml
+    
+    - name: Create Resource Group
+      run: |
+          az group create --name ${{env.resourceGroupName}} --location ${{env.resourceGroupLocation}}
+          echo "Resource Group ${{env.resourceGroupName}} created in subscription $(az account show --query name --output tsv)."
+
+    - name: Deploy Acr Group
+      run: |
+          echo "Deploying to Resource Group ${{env.resourceGroupName}} in subscription $(az account show --query name --output tsv)."
+          az deployment group create --resource-group ${{env.resourceGroupName}} --name imageRegistryDeploy --template-file ./infra/acr_deploy.bicep
+          
