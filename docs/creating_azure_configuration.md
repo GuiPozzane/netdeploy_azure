@@ -19,9 +19,9 @@ This guide will walk you through the steps needed to deploy your application usi
      ```
 
 ### 3. Select Your Subscription
-   - Use the following command to set your subscription:
+   - Use the following command to set your subscription (replace `{subscription-id}` with your actual subscription ID):
      ```sh
-     az account set --subscription <name-or-id>
+     az account set --subscription {subscription-id}
      ```
 
 ### 4. Create a Service Principal
