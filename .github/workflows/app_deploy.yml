@@ -46,7 +46,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: src
-        file: src/Api/DockerFile
+        file: src/Api/Dockerfile
         push: true
         tags: ${{steps.acr.outputs.acr_name}}.azurecr.io/${{env.name}}:${{format('{0}-{1}',github.run_number,github.run_id)}}, ${{steps.acr.outputs.acr_name}}.azurecr.io/${{env.name}}:latest
     
