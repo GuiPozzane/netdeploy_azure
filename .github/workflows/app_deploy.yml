@@ -45,7 +45,7 @@ jobs:
     - name: API - Build and push image
       uses: docker/build-push-action@v5
       with:
-        context: src/api
+        context: src
         file: src/api/DockerFile
         push: true
         tags: ${{steps.acr.outputs.acr_name}}.azurecr.io/${{env.name}}:${{format('{0}-{1}',github.run_number,github.run_id)}}, ${{steps.acr.outputs.acr_name}}.azurecr.io/${{env.name}}:latest
@@ -56,7 +56,7 @@ jobs:
 
            $paramFile.parameters.acrUsername.value = "${{steps.acr.outputs.acr_name}}"
            $paramFile.parameters.name.value = "${{env.name}}"
-           
+
       shell: pwsh
 
     - name: Log Infra Settings
