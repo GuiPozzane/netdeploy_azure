@@ -61,6 +61,8 @@ jobs:
            $jsonFile.parameters.acrUsername.value = "${{steps.acr.outputs.acr_name}}"
            $jsonFile.parameters.name.value = "${{env.name}}"
 
+           $jsonFile | ConvertTo-Json | Set-Content ./infra/main.parameters.json
+
       shell: pwsh
 
     - name: Log Infra Settings
