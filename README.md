@@ -10,4 +10,4 @@ This is a project to show how to integrate with Azure devops and publish a sampl
 - [The challenge](docs/the_challenge.md)
 
 ## Useful Documents
-- [Awesome Github Actions]("https://github.com/sdras/awesome-actions")
+- [Awesome Github Actions](https://github.com/sdras/awesome-actions)
