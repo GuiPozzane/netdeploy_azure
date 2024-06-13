@@ -7,6 +7,7 @@ param mainContainerImageFullPath string
 param mainContainerName string
 param mainContainerRegistry string
 param mainContainerRegistryUserName string
+@secure()
 param mainContainerRegistryPassword string
 
 param env array = []
@@ -14,25 +15,36 @@ param cpu int
 param memory string
 
 param scale object
+param environmentId string
 
+
+var acrPasswordPropertyName = 'acr-password'
+var secrets = [
+  {
+    name: acrPasswordPropertyName
+    value: mainContainerRegistryPassword
+  }
+]
 resource containerApplication 'Microsoft.App/containerApps@2024-03-01' = {
   name: applicationName
   location: location
   tags: resourceGroup().tags
   properties:{
+    environmentId:environmentId
     configuration:{
       activeRevisionsMode: 'Single'
+      secrets:secrets
       registries:[
         {
           server: mainContainerRegistry
           username: mainContainerRegistryUserName
-          passwordSecretRef: mainContainerRegistryPassword
+          passwordSecretRef: acrPasswordPropertyName
         }
       ]
       ingress:{
         external:true
         corsPolicy: {
-          allowedOrigins:'*'
+          allowedOrigins:['*']
         }
         targetPort: port
         ipSecurityRestrictions: [

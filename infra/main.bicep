@@ -17,6 +17,12 @@ module appInsights './modules/application_insights.bicep' = {
   }
 }
 
+module environment 'modules/environment.bicep' = {
+  name:'${name}-containerapp-env'
+  params:{
+    environmentName: '${name}-containerapp-env'
+  }
+}
 var acrPassword = acrResource.listCredentials().passwords[0].value
 var acrLoginServer = acrResource.properties.loginServer
 var containerImageFullPath = '${acrLoginServer}/${name}:${containerImageVersion}'
@@ -28,5 +34,6 @@ module container 'components/api_rest.bicep' = {
     mainContainerRegistryPassword:acrPassword
     mainContainerRegistryUserName: acrUsername
     name: name
+    environmentId: environment.outputs.environmentId
   }
 }

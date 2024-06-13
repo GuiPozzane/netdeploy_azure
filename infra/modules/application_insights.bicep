@@ -11,9 +11,9 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
   location: location
   tags : resourceGroup().tags
   properties:{
-    retentionInDays:7
+    retentionInDays:30
     sku: {
-      name:'Free'
+      name:'PerGB2018'
     }
   }
 }
@@ -25,7 +25,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   properties:{
     Application_Type: 'web'
     Request_Source: 'rest'
-    WorkspaceResourceId: logAnalyticsWorkspace
+    WorkspaceResourceId: logAnalyticsWorkspace.id
   }
 }
 

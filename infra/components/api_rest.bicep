@@ -4,8 +4,9 @@ param name string
 param containerImageFullPath string
 param mainContainerRegistry string
 param mainContainerRegistryUserName string
+@secure()
 param mainContainerRegistryPassword string
-
+param environmentId string
 var scale = {}
 var env = [
   {
@@ -14,7 +15,7 @@ var env = [
   }
 ]
 
-var appName ='${name}-api'
+var appName ='${name}api'
 module apiRest '../modules/container_deploy.bicep' = {
   name: appName
   params:{
@@ -30,7 +31,7 @@ module apiRest '../modules/container_deploy.bicep' = {
     mainContainerRegistry:mainContainerRegistry
     mainContainerRegistryPassword:mainContainerRegistryPassword
     mainContainerRegistryUserName:mainContainerRegistryUserName
-    
+    environmentId: environmentId
   }
 }
 
