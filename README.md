@@ -4,5 +4,6 @@ This is a project to show how to integrate with Azure devops and publish a sampl
 
 
 ## Summary
-- [Introduction](docs/everything_you_need.md)
+- [Everything you need](docs/everything_you_need.md)
+- [Github Private Repo](docs/everything_you_need.md)
 - [Setup Instructions](docs/creating_azure_configuration.md)
