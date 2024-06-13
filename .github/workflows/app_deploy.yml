@@ -36,7 +36,7 @@ jobs:
     - name: Get Acr name
       id: acr
       run: |
-           ACR_NAME=$(az acr list --resourece-group $resourceGroupName --query "[0].name" --output tsv)
+           ACR_NAME=$(az acr list --resource-group $resourceGroupName --query "[0].name" --output tsv)
            echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
       shell: bash
       env:
