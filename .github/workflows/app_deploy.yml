@@ -1,0 +1,68 @@
+name: CD - Deploy Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'prd'
+        type: choice
+        options:
+          - stg
+          - prd
+
+jobs:
+  ApplicationDeploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Load iac environment variables - Default
+      uses: ./.github/actions/load-env
+      with:
+        file: ./.github/workflows/variables/iac/env.default.yaml
+
+    - name: Load iac environment variables - Environment Specific
+      uses: ./.github/actions/load-env
+      with:
+        file: ./.github/workflows/variables/iac/env.${{ github.event.inputs.environment }}.yaml
+    - name: Az Login
+      uses: ./.github/actions/az-login
+      with:
+        azurecredentials: ${{ secrets.AZURE }}
+    
+    - name: Get Acr name
+      id: acr
+      run: |
+           ACR_NAME=$(az acr list --resourece-group $resourceGroupName --query "[0].name" --output tsv)
+           echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        AZURE_CLI_DISABLE_PROMPT: 1
+    
+    - name: API - Build and push image
+      uses: docker/build-push-action@v5
+      with:
+        context: src/api
+        file: src/api/DockerFile
+        push: true
+    
+    - name: Transform Infra Settings
+      run: |
+           $jsonFile = Get-Content ./infra/main.parameters.json | ConvertFrom-Json
+
+           $paramFile.parameters.acrUsername.value = "${{env.acrUsername}}"
+           $paramFile.parameters.name.value = "${{env.name}}"
+      shell: pwsh
+
+    - name: Log Infra Settings
+      run: |
+           cat ./infra/main.parameters.json
+      shell: bash
+    
+    - name: Deploy App
+      id: deploy_app
+      run: |
+           az deployment group create --resource-group ${{env.resourceGroupName}} --name deploy --template-file infra/main.bicep --parameters infra/main.parameters.json
